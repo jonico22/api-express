@@ -4,43 +4,44 @@ block main
     header.max-w-lg.mx-auto
     a(href='#')
         h1.text-4xl.font-bold.text-center PRODUCTOS
+    a(href='/productos')  listado de productos
     main.bg-white.max-w-lg.mx-auto.p-8.my-10.rounded-lg.shadow-2xl(class='md:p-12')
-    section.mt-10
-        form#form.flex.flex-col(action='' enctype='multipart/form-data' method='POST')
-        .mb-6.pt-3.rounded.bg-gray-200
-            label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='titulo') TITULO
-            input#titulo.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='titulo' required='' class='focus:outline-none focus:border-purple-600')
-        .mb-6.pt-3.rounded.bg-gray-200
-            label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='precio') PRECIO
-            input#precio.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='precio' required='' class='focus:outline-none focus:border-purple-600')
-        .mb-6.pt-3.rounded.bg-gray-200
-            label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='password') FOTO
-            input#miniatura.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='miniatura' required='' class='focus:outline-none focus:border-purple-600')
-        button.bg-purple-600.text-white.font-bold.py-2.rounded.shadow-lg.transition.duration-200(class='hover:bg-purple-700 hover:shadow-xl' type='submit') GUARDAR
+        section.mt-10
+            form#form.flex.flex-col(action='' enctype='multipart/form-data' method='POST')
+            .mb-6.pt-3.rounded.bg-gray-200
+                label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='titulo') TITULO
+                input#titulo.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='titulo' required='' class='focus:outline-none focus:border-purple-600')
+            .mb-6.pt-3.rounded.bg-gray-200
+                label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='precio') PRECIO
+                input#precio.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='precio' required='' class='focus:outline-none focus:border-purple-600')
+            .mb-6.pt-3.rounded.bg-gray-200
+                label.block.text-gray-700.text-sm.font-bold.mb-2.ml-3(for='password') FOTO
+                input#miniatura.bg-gray-200.rounded.w-full.text-gray-700.border-b-4.border-gray-300.transition.duration-500.px-3.pb-3(type='text' name='miniatura' required='' class='focus:outline-none focus:border-purple-600')
+            button.bg-purple-600.text-white.font-bold.py-2.rounded.shadow-lg.transition.duration-200(class='hover:bg-purple-700 hover:shadow-xl' type='submit') GUARDAR
     script.
-    let form_el = document.getElementById("form");
-    let input1 = document.getElementById("titulo");
-    let input2 = document.getElementById("precio");
-    let input3 = document.getElementById("miniatura");
-    function fillData() {
-    return {
-    "titulo" : input1.value,
-    "precio" : input2.value,
-    "miniatura" : input3.value
-    }
-    }
-    const save = ()=>{
-    fetch('http://localhost:8080/api/productos', {
-    method: "POST",
-    body: JSON.stringify(fillData()),
-    headers: {"Content-type": "application/json; charset=UTF-8"}
-    })
-    .then(response => response.json())
-    .then(json => {
-    alert("Se agrego producto " +  JSON.stringify(json))
-    });
-    }
-    form_el.addEventListener("submit", function(evt) {
-    evt.preventDefault();
-    save();
-    });
+        let form_el = document.getElementById("form");
+        let input1 = document.getElementById("titulo");
+        let input2 = document.getElementById("precio");
+        let input3 = document.getElementById("miniatura");
+        function fillData() {
+            return {
+            "titulo" : input1.value,
+            "precio" : input2.value,
+            "miniatura" : input3.value
+            }
+        }
+        const save = ()=>{
+        fetch('http://localhost:8080/api/productos', {
+            method: "POST",
+            body: JSON.stringify(fillData()),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json())
+            .then(json => {
+            alert("Se agrego producto " +  JSON.stringify(json))
+            });
+        }
+        form_el.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+            save();
+        });
