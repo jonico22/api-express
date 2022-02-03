@@ -1,0 +1,27 @@
+extends main 
+block main
+    header.max-w-lg.mx-auto
+        a(href='#')
+            h1.text-4xl.font-bold.text-center LISTADO DE PRODUCTOS
+    section.bg-white.py-20(class='lg:py-[120px]')
+        .container
+            .flex.flex-wrap.-mx-4
+                .w-full.px-4
+                    .max-w-full.overflow-x-auto
+                    if productos.length > 0 
+                        table.table-auto.w-full
+                            thead
+                                tr.bg-primary.text-center
+                                    th.text-lg.font-semibold.text-white.py-4.px-3(class='w-1/6 min-w-[160px] lg:py-7 lg:px-4') NOMBRE
+                                    th.text-lg.font-semibold.text-white.py-4.px-3(class='w-1/6 min-w-[160px] lg:py-7 lg:px-4') PRECIO
+                                    th.text-lg.font-semibold.text-white.py-4.px-3(class='w-1/6 min-w-[160px] lg:py-7 lg:px-4') FOTO
+                            tbody
+                                each producto in productos
+                                    tr
+                                        td.text-center.text-dark.font-medium.text-base.py-5.px-2.border-b.border-l(class='bg-[#F3F6FF] border-[#E8E8E8]') = producto.titulo 
+                                        td.text-center.text-dark.font-medium.text-base.py-5.px-2.bg-white.border-b(class='border-[#E8E8E8]') = producto.precio 
+                                        td.text-center.text-dark.font-medium.text-base.py-5.px-2.border-b(class='bg-[#F3F6FF] border-[#E8E8E8]')
+                                            img(src=producto.miniatura alt='producto')
+                    else
+                        strong No hay productos
+            

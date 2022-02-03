@@ -1,0 +1,59 @@
+<header class="max-w-lg mx-auto">
+    <a href="#">
+        <h1 class="text-4xl font-bold  text-center">PRODUCTOS</h1>
+    </a>
+</header>
+
+<main class="bg-white max-w-lg mx-auto p-8 md:p-12 my-10 rounded-lg shadow-2xl"> 
+    <section class="mt-10">
+        <form action="" id="form" enctype="multipart/form-data" class="flex flex-col" method="POST" >
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="titulo">TITULO</label>
+                <input type="text" id="titulo" name="titulo" required class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
+            </div>
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="precio">PRECIO</label>
+                <input type="text" id="precio" name="precio" required class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
+            </div>
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="password">FOTO</label>
+                <input type="text" name="miniatura" id="miniatura" required class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
+            </div>
+            <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">GUARDAR</button>
+        </form>
+    </section>
+</main>
+<script>
+
+let form_el = document.getElementById("form");
+let input1 = document.getElementById("titulo");
+let input2 = document.getElementById("precio");
+let input3 = document.getElementById("miniatura");
+
+function fillData() {
+    return {
+        "titulo" : input1.value,
+        "precio" : input2.value,
+        "miniatura" : input3.value
+    }
+    
+}
+
+const save = ()=>{
+    fetch('http://localhost:8080/api/productos', {
+    method: "POST",
+    body: JSON.stringify(fillData()),
+    headers: {"Content-type": "application/json; charset=UTF-8"}
+    })
+    .then(response => response.json()) 
+    .then(json => {
+        alert("Se agrego producto " +  JSON.stringify(json))
+    });
+}
+
+form_el.addEventListener("submit", function(evt) {
+    evt.preventDefault();
+    save();
+});
+
+</script>
