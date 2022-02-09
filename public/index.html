@@ -7,6 +7,7 @@
     <title>Document</title>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body class="body-bg min-h-screen pt-12 md:pt-20 pb-6 px-2 md:px-0" style="font-family:'Lato',sans-serif;">
@@ -34,13 +35,146 @@
                 <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">GUARDAR</button>
             </form>
         </section>
+        
     </main>
+    <main class="bg-white max-w-lg mx-auto">
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full px-4">
+                <div class="max-w-full overflow-x-auto">
+                    <div id="template"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <br>
+    <main class="bg-white max-w-lg mx-auto">
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full px-4">
+                <strong>CENTRO DE MENSAJES</strong>
+                <br>
+                <br>
+                <form onsubmit="return enviarMensaje()">
+                    <input type="email" required name="" id="nombre" placeholder="Correo"  class="border py-2" >
+                    <input type="text" name="" id="mensaje" placeholder="mensaje" class="border py-2">
+                    <input type="submit" value="Enviar" style="width: 150px;" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200">
+                </form>
+                <br>
+                <hr>
+                <br>
+                <div class="max-w-full overflow-x-auto">
+                    <div id="contenedorMsjs">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>   
+    <script id="data-template" type="text/x-handlebars-template">
+        <table class="table-auto w-full">
+            <thead>
+               <tr class="bg-primary text-center">
+                  <th
+                     class="
+                     w-1/6
+                     min-w-[160px]
+                     text-lg
+                     font-semibold
+                    
+                     py-4
+                     lg:py-7
+                     px-3
+                     lg:px-4
+                     "
+                     >
+                     NOMBRE
+                  </th>
+                  <th
+                     class="
+                     w-1/6
+                     min-w-[160px]
+                     text-lg
+                     font-semibold
+                    
+                     py-4
+                     lg:py-7
+                     px-3
+                     lg:px-4
+                     "
+                     >
+                     PRECIO
+                  </th>
+                  <th
+                     class="
+                     w-1/6
+                     min-w-[160px]
+                     text-lg
+                     font-semibold
+                    
+                     py-4
+                     lg:py-7
+                     px-3
+                     lg:px-4
+                     "
+                     >
+                     FOTO
+                  </th>
+               
+               </tr>
+            </thead>
+            <tbody>
+                {{#each productos}}
+               <tr>
+                  <td
+                     class="
+                     text-center text-dark
+                     font-medium
+                     text-base
+                     py-5
+                     px-2
+                     bg-[#F3F6FF]
+                     border-b border-l border-[#E8E8E8]
+                     "
+                     >
+                     {{this.titulo}}
+                  </td>
+                  <td
+                     class="
+                     text-center text-dark
+                     font-medium
+                     text-base
+                     py-5
+                     px-2
+                     bg-white
+                     border-b border-[#E8E8E8]
+                     "
+                     >
+                    {{this.precio}}
+                  </td>
+                  <td
+                     class="
+                     text-center text-dark
+                     font-medium
+                     text-base
+                     py-5
+                     px-2
+                     bg-[#F3F6FF]
+                     border-b border-[#E8E8E8]
+                     "
+                     ><img src="{{this.miniatura}}" alt="producto">
+                  </td>
+               </tr>
+                {{/each}}
+            </tbody>
+         </table>
+    </script>   
 <script>
 
     let form_el = document.getElementById("form");
     let input1 = document.getElementById("titulo");
     let input2 = document.getElementById("precio");
     let input3 = document.getElementById("miniatura");
+    const socket = io.connect();
 
     function fillData() {
         return {
@@ -59,13 +193,68 @@
         })
         .then(response => response.json()) 
         .then(json => {
-            alert("Se agrego producto " +  JSON.stringify(json))
+            console.log(json)
+            socket.emit('newProductos',json);
         });
     }
     
     form_el.addEventListener("submit", function(evt) {
         evt.preventDefault();
         save();
+    });
+
+    socket.on('listProduct', (productos) => {
+        console.log(productos)
+        document.getElementById('template').innerHTML = ''
+        let template = document.getElementById("data-template").innerHTML;
+        let render = Handlebars.compile(template);
+        document.getElementById("template").innerHTML = render({
+            productos
+        });
+    });
+
+    
+
+
+    function padTo2Digits(num) {
+    return num.toString().padStart(2, '0');
+    }
+
+    function formatDate(date) {
+        return (
+            [
+            padTo2Digits(date.getDate()),
+            padTo2Digits(date.getMonth() + 1),
+            date.getFullYear(),
+            ].join('/') +
+            ' ' +
+            [
+            padTo2Digits(date.getHours()),
+            padTo2Digits(date.getMinutes()),
+            padTo2Digits(date.getSeconds()),
+            ].join(':')
+        );
+    }
+
+    function enviarMensaje() {
+        const nombre = document.querySelector('#nombre');
+        const mensaje = document.querySelector('#mensaje');
+        
+        socket.emit('mensajeNuevo', {autor: nombre.value, texto: mensaje.value , update: formatDate(new Date)});
+        return false;
+    }
+
+
+    socket.on('mensajes', mensajes => {
+        console.log(mensajes);
+
+        let contMensajesHtml = '';
+
+        mensajes.forEach(mensaje => {
+            contMensajesHtml += `<span style="color:blue"><b>${mensaje.autor} </b></span> <span style="color:brown">[<b>${mensaje.update}]: </span><span style="color:green;font-style: italic;">${mensaje.texto}</span><br>`;
+        });
+
+        document.getElementById('contenedorMsjs').innerHTML = contMensajesHtml;
     });
 
 </script>
