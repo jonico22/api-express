@@ -1,3 +1,9 @@
+const { options } = require('../config/options');
+const Modelo = require('./model/Product')
+
+const modeloProduct = new Modelo(options);
+
+
 function searchId (item,id){
     let search = item.filter(elm => Number(elm.id) === Number(id))[0]
     return search === undefined ? null : search
@@ -7,48 +13,38 @@ class Controller {
     constructor(){
         this.products = []
     }
-     save(data){
-       
-        let newId = this.products.length + 1
-        let search = searchId(this.products,newId)
-        if ( search === null) {
-            data['id'] = newId
-        } else {
-            data['id'] = Math.max(...this.products.map( item=>item.id)) + 1
-        }
-        this.products.push(data)
-        return data
-        
+     async save (data){
+        let res = await modeloProduct.insertar(data);
+        return res
     }
 
-     getById(id){
-        let result =  searchId(this.products,id)
+    async getById(id){
+        let result = await modeloProduct.listarDetalle(id)
         return result
     }
 
-     getAll(){
-        return this.products
-    }
+    async getAll(){
+        let res = await modeloProduct.listar();
+        return res
+     }
 
-     deleteById(id){
-        let search = searchId(this.products,id)
+     async deleteById(id){
+        let prod = await this.getAll()
+        let search = searchId(prod,id)
         if ( search === null) {
             return null
         } else {
-            return this.products.filter(elm => Number(elm.id) !== Number(id))
+            return await modeloProduct.eliminar(id)
         }
     }
 
-    updateById(id,data){
-        let search = searchId(this.products,id)
+    async updateById(id,data){
+        let prod = await this.getAll()
+        let search = searchId(prod,id)
         if ( search === null) {
             return null
         } else {
-            let result = this.products.filter(elm => Number(elm.id) === Number(id))[0]
-            data.titulo !== undefined ? result.titulo = data.title :  null
-            data.precio !== undefined ? result.precio = data.precio :  null
-            data.miniatura !== undefined ? result.miniatura = data.miniatura :  null
-            return this.products
+            return  await modeloProduct.actualizar({id: id}, data);
         }
     }
 

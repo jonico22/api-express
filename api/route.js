@@ -3,14 +3,16 @@ const route = express.Router();
 
 const Controller = require('./controller');
 const objController = new Controller();
-route.get('/', (req, res)=>{
-    let list =  objController.getAll(); 
+
+route.get('/',async (req, res)=>{
+    let list = await objController.getAll(); 
+    console.log(list)
     res.status(200).json(list);
 })
 
-route.get('/:id', (req, res)=>{
+route.get('/:id',async (req, res)=>{
     console.log(req.params.id)
-    let list =  objController.getById(req.params.id); 
+    let list = await objController.getById(req.params.id); 
     if ( list === null) {
         res.status(200).json( {error: 'producto no encontrado'});
     } else {
@@ -19,9 +21,9 @@ route.get('/:id', (req, res)=>{
     
 })
 
-route.delete('/:id', (req, res)=>{
+route.delete('/:id', async (req, res)=>{
     
-    let list =  objController.deleteById(req.params.id); 
+    let list = await  objController.deleteById(req.params.id); 
     console.log(list)
     if ( list === null) {
         res.status(200).json( {error: 'producto no encontrado'});
@@ -36,9 +38,9 @@ route.post('/', (req, res)=>{
     res.status(200).json( objController.save(data));   
 })
 
-route.put('/:id', (req, res)=>{
+route.put('/:id',async (req, res)=>{
     console.log(req.body)
-    let list =  objController.updateById(req.params.id,req.body); 
+    let list = await objController.updateById(req.params.id,req.body); 
     if ( list === null) {
         res.status(200).json( {error: 'producto no encontrado'});
     } else {

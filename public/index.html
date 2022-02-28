@@ -241,6 +241,8 @@
         const mensaje = document.querySelector('#mensaje');
         
         socket.emit('mensajeNuevo', {autor: nombre.value, texto: mensaje.value , update: formatDate(new Date)});
+        nombre.value = ''
+        texto.value=''
         return false;
     }
 
